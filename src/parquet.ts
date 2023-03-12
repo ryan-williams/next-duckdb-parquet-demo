@@ -9,13 +9,9 @@ import {useEffect, useState} from "react";
 
 const ENABLE_DUCK_LOGGING = false;
 
-const SilentLogger = {
-    log: () => {
-        /* do nothing */
-    },
-};
+const SilentLogger = { log: () => {}, };
 
-// TODO: shut DB down at some point
+// TODO: shut DB down at some point?
 
 type WorkerBundle = { bundle: DuckDBBundle, worker: Worker }
 
@@ -52,15 +48,23 @@ export async function browserWorkerBundle(): Promise<WorkerBundle> {
     }
 }
 
-let dbPromise: Promise<duckdb.AsyncDuckDB> | null = null
+// Global AsyncDuckDB instance
+let dbPromise: Promise<AsyncDuckDB> | null = null
 
-export function getDuckDb(): Promise<duckdb.AsyncDuckDB> {
-    if (dbPromise) return dbPromise
-    dbPromise = initDuckDb()
+/**
+ * Fetch global AsyncDuckDB instance; initialize if necessary
+ */
+export function getDuckDb(): Promise<AsyncDuckDB> {
+    if (!dbPromise) {
+        dbPromise = initDuckDb()
+    }
     return dbPromise
 }
 
-export async function initDuckDb(): Promise<duckdb.AsyncDuckDB> {
+/**
+ * Initialize global AsyncDuckDB instance
+ */
+export async function initDuckDb(): Promise<AsyncDuckDB> {
     console.time("duckdb-wasm fetch")
     const { worker, bundle } = await (typeof window === 'undefined' ? nodeWorkerBundle() : browserWorkerBundle())
     console.timeEnd("duckdb-wasm fetch")
@@ -69,7 +73,7 @@ export async function initDuckDb(): Promise<duckdb.AsyncDuckDB> {
     const logger = ENABLE_DUCK_LOGGING
         ? new duckdb.ConsoleLogger()
         : SilentLogger;
-    const db = new duckdb.AsyncDuckDB(logger, worker);
+    const db = new AsyncDuckDB(logger, worker);
     await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
     await db.open({
         path: ":memory:",
@@ -81,15 +85,28 @@ export async function initDuckDb(): Promise<duckdb.AsyncDuckDB> {
     return db
 }
 
-export async function loadParquet<T>(path: string): Promise<T[]> {
-    const query = `select * from read_parquet('${path}')`
-    const db = await getDuckDb()
+/**
+ * Run a query against the provided DuckDB instance, round-trip through JSON to obtain plain JS objects
+ */
+export async function runQuery<T>(db: AsyncDuckDB, query: string): Promise<T[]> {
     const conn = await db.connect()
     const result = await conn.query(query)
     const proxies = result.toArray()
+    // TODO: is there an easier / cheaper way to get plain JS objects here?
     return JSON.parse(JSON.stringify(proxies)) as T[]
 }
 
+/**
+ * Load a parquet file from a local path or URL
+ */
+export async function loadParquet<T>(path: string): Promise<T[]> {
+    const db = await getDuckDb()
+    return runQuery(db, `select * from read_parquet('${path}')`)
+}
+
+/**
+ * Hook for loading a parquet file or URL; starts out `null`, gets populated asynchronously
+ */
 export function useParquet<T>(url?: string): T[] | null {
     const [ data, setData ] = useState<T[] | null>(null)
     useEffect(
@@ -102,23 +119,24 @@ export function useParquet<T>(url?: string): T[] | null {
     return data
 }
 
-export async function parquetBuf2json<T>(bytes: number[] | Uint8Array, table: string, cb: (rows: T[]) => void): Promise<AsyncDuckDB> {
-    const query = `SELECT * FROM parquet_scan('${table}')`
+/**
+ * Convert [a byte array representing a Parquet file] to an array of records
+ */
+export async function parquetBuf2json<T>(bytes: number[] | Uint8Array, table: string): Promise<T[]> {
     const db = await getDuckDb()
     const uarr = new Uint8Array(bytes)
     await db.registerFileBuffer(table, uarr)
-    const conn = await db.connect()
-    const result = await conn.query(query)
-    const data = JSON.parse(JSON.stringify(result.toArray())) as T[]
-    cb(data)
-    return db
+    return runQuery(db, `SELECT * FROM parquet_scan('${table}')`)
 }
 
+/**
+ * Hook for converting a Parquet byte array to records
+ */
 export function useParquetBuf<T>(bytes: number[] | Uint8Array, table: string): T[] | null {
     const [ data, setData ] = useState<T[] | null>(null)
     useEffect(
         () => {
-            parquetBuf2json(bytes, table, setData)
+            parquetBuf2json<T>(bytes, table).then(data => setData(data))
         },
         []
     )
