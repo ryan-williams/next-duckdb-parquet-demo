@@ -15,7 +15,7 @@ jobs:
           cache-dependency-path: yarn.lock
       - run: echo 'node_modules/.bin' >> $GITHUB_PATH
       - run: yarn
-      - run: next build
+      - run: NEXT_BASE_PATH=/next-duckdb-parquet-demo next build
       - run: next export
       - run: touch out/.nojekyll
       - name: Deploy to GH Page
