@@ -16,7 +16,6 @@ export default function Home({ dataArr, data }: { dataArr: number[], data: Perso
 
     const path = 'people.parquet'
     const url = (typeof window !== 'undefined') ? `${window.location.href}${path}` : undefined
-    const shortUrl = (typeof window !== 'undefined') ? `${window.location.host}/${path}` : undefined  // omit scheme, for display purposes
     const fetchedData = useParquet(url)
     return (
         <div>
@@ -25,7 +24,7 @@ export default function Home({ dataArr, data }: { dataArr: number[], data: Perso
             <p>Parquet data buffer loaded on server, parsed on client (with <code>useParquetBuf</code>):</p>
             <pre>{JSON.stringify(parsedData)}</pre>
             {fetchedData && <>
-                <p>Parquet data fetched on client, from <a href={url}>{shortUrl}</a> (with <code>useParquet</code>):</p>
+                <p>Parquet data fetched on client, from <a href={url}>{url}</a> (with <code>useParquet</code>):</p>
                 <pre>{JSON.stringify(fetchedData)}</pre>
             </>}
         </div>
