@@ -3,9 +3,9 @@ Example [Next.js] app using [duckdb-wasm] to read/fetch Parquet files, in Node a
 
 ## Relevant files:
 - [pages/index.tsx](pages/index.tsx): shows 3 ways of loading Parquet data (on a mix of client and server):
-  1. Load parquet file as byte array on server, send to client, decode in browser (minimize data sent to client while loading a static page)
-  2. Load parquet file on server, send to client
-  3. Fetch parquet file by URL on client
+  1. [`useParquetBuf`]: load parquet file as byte array on server, send to client, decode in browser (minimize data sent to client while loading a static page)
+  2. [`loadparquet`]: load parquet file on server, send to client
+  3. [`useParquet`]: fetch parquet file by URL on client
 - [src/parquet.ts](src/parquet.ts): utilities for instantiating DuckDB and fetching/loading Parquet data
   - Copied from [runsascoded/next-utils/parquet.ts], adapted from [ilyabo/graphnavi/lib/useDuckConn.ts]
   - See also [duckdb-wasm#1148]
@@ -60,3 +60,7 @@ COPY (SELECT * FROM people) TO 'public/people.parquet' (FORMAT 'parquet');
 [runsascoded/next-utils/parquet.ts]: https://github.com/runsascoded/next-utils/blob/25af539a1518dcc786de0892f265eb6c0245287a/src/parquet.ts
 [ilyabo/graphnavi/lib/useDuckConn.ts]: https://github.com/ilyabo/graphnavi/blob/fd89fe77edd48614cc5a52772b5f9f66b214bbea/lib/useDuckConn.ts
 [duckdb-wasm#1148]: https://github.com/duckdb/duckdb-wasm/issues/1148
+
+[`useParquetBuf`]: src/parquet.ts#L132-L144
+[`loadparquet`]: src/parquet.ts#L99-L105
+[`useParquet`]: src/parquet.ts#L107-L120
