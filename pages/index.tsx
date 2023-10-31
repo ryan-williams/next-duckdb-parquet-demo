@@ -27,6 +27,8 @@ export default function Home({ dataArr, data }: { dataArr: number[], data: Perso
                 <p>Parquet data fetched on client, from <a href={url}>{url}</a> (with <code>useParquet</code>):</p>
                 <pre>{JSON.stringify(fetchedData)}</pre>
             </>}
+            <hr/>
+            <p>GitHub: <a target={"_blank"} href={"https://github.com/ryan-williams/next-duckdb-parquet-demo"}>ryan-williams/next-duckdb-parquet-demo</a></p>
         </div>
     )
 }
