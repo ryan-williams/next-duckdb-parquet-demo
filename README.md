@@ -124,6 +124,6 @@ I haven't found any further leads about what might be going on.
 [@app-broken]: https://github.com/ryan-williams/next-duckdb-parquet-demo/tree/app-broken
 [failed GHA]: https://github.com/ryan-williams/next-duckdb-parquet-demo/actions/runs/6708443526/job/18229259080
 
-[broken db instantiation line]: https://github.com/ryan-williams/next-duckdb-parquet-demo/blob/app-broken/src/load-parquet.ts#L43
+[broken db instantiation line]: https://github.com/ryan-williams/next-duckdb-parquet-demo/blob/app-broken/src/parquet.ts#L43
 [broken loadParquet]: https://github.com/ryan-williams/next-duckdb-parquet-demo/blob/app-broken/src/parquet.ts#L66-L72
 [next.js#57819]: https://github.com/vercel/next.js/discussions/57819
