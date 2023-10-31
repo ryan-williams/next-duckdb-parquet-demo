@@ -115,8 +115,6 @@ I haven't found any further leads about what might be going on.
 [`loadparquet`]: src/parquet.ts#L99-L105
 [`useParquet`]: src/parquet.ts#L107-L120
 [runsascoded.com/next-duckdb-parquet-demo]: https://runsascoded.com/next-duckdb-parquet-demo
-[app demo]: https://runsascoded.com/next-duckdb-parquet-demo/app
-[pages demo]: https://runsascoded.com/next-duckdb-parquet-demo/pages
 
 [pages/pages.tsx]: https://github.com/ryan-williams/next-duckdb-parquet-demo/blob/app-broken/pages/pages.tsx
 [app/app/page.tsx]: https://github.com/ryan-williams/next-duckdb-parquet-demo/blob/app-broken/app/app/page.tsx
