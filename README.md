@@ -61,8 +61,8 @@ For some reason, the server-side `loadParquet` path doesn't seem to work under N
 
 Here's a trimmed down example:
 
-- [pages/pages.tsx] ✅ works ([demo][pages demo])
-- [app/app/page.tsx] ❌ broken ([demo][app demo])
+- [pages/pages.tsx] ✅ works
+- [app/app/page.tsx] ❌ broken
 
 Attempting to load the latter emits this on the server side:
 ```
@@ -76,7 +76,9 @@ made logger
 made db
 worker terminated with 1 pending requests
 ```
-and the client hangs (similarly, `next build` times out).
+and the client hangs.
+
+Similarly, `next build` times out, meaning I can't deploy a demo. [Here's a GitHub Actions run][failed GHA] that failed due to this issue.
 
 `diff pages/pages.tsx app/app/page.tsx`:
 ```diff
@@ -90,7 +92,7 @@ and the client hangs (similarly, `next build` times out).
 +    const data = await loadParquet<Person>(parquetPath)  // ❌ broken under app/
 ```
 
-[This line](src/load-parquet.ts#L43):
+[This line][broken db instantiation line]:
 
 ```typescript
 await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
@@ -113,8 +115,9 @@ I haven't found any further leads about what might be going on.
 [`loadparquet`]: src/parquet.ts#L99-L105
 [`useParquet`]: src/parquet.ts#L107-L120
 [runsascoded.com/next-duckdb-parquet-demo]: https://runsascoded.com/next-duckdb-parquet-demo
-[app demo]: https://runsascoded.com/next-duckdb-parquet-demo/app
-[pages demo]: https://runsascoded.com/next-duckdb-parquet-demo/pages
 
 [pages/pages.tsx]: pages/pages.tsx
 [app/app/page.tsx]: app/app/page.tsx
+[failed GHA]: https://github.com/ryan-williams/next-duckdb-parquet-demo/actions/runs/6708443526/job/18229259080
+
+[broken db instantiation line]: src/load-parquet.ts#L43
