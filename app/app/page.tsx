@@ -1,5 +1,5 @@
 import React from "react"
-import { loadParquet } from "@/src/load-parquet";
+import { loadParquet } from "@/src/parquet";
 
 type Person = { id: number, name: string }
 const parquetPath = 'public/people.parquet'
