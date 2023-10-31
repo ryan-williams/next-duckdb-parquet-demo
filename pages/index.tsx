@@ -1,6 +1,6 @@
 import React from "react"
 import * as fs from "fs";
-import {loadParquet, useParquet, useParquetBuf} from "../src/parquet";
+import {loadParquet, useParquet, useParquetBuf} from "@/src/parquet";
 
 type Person = { id: number, name: string }
 
