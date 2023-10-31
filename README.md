@@ -60,7 +60,7 @@ COPY (SELECT * FROM people) TO 'public/people.parquet' (FORMAT 'parquet');
 
 ## ⚠️ Broken under "App Router" ⚠️ <a id="broken"></a>
 
-For some reason, [the server-side `loadParquet` path][broken loadParquet] doesn't seem to work under Next.js new "App router" (also reported at [next.js#57819]).
+For some reason, [the server-side `loadParquet` path][broken loadParquet] doesn't seem to work under [Next.js]'s new "App router" (also reported at [next.js#57819]).
 
 Here's a trimmed down example (from [the @app-broken branch][@app-broken]):
 
